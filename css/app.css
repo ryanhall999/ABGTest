@@ -1,0 +1,75 @@
+#outer_box {
+	display: flex;
+	flex-direction: column;
+}
+
+#head {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	background-color: #135ecb;
+	height: 100px;
+}
+
+#items {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+#prod {
+	display: flex;
+	flex-direction: column;
+	border: 2px solid black;
+	padding: 20px;
+	margin: 3px;
+	background-color: #434749;
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 18px;
+	letter-spacing: 2px;
+	word-spacing: 2px;
+	font-weight: 400;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+
+#listHead {
+	display: flex;
+	flex-direction: column;
+	border: 2px solid black;
+	padding: 20px;
+	margin: 3px;
+	background-color: #434749;
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 18px;
+	letter-spacing: 2px;
+	word-spacing: 2px;
+	font-weight: 800;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+
+body {
+	background-color: #2e3031;
+	color: #f0ebe3;
+}
+
+#individualItem {
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 18px;
+	letter-spacing: 2px;
+	word-spacing: 2px;
+	font-weight: 400;
+}
+
+#inputs {
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+}
+
+input {
+	height: 40;
+	width: 200;
+}
