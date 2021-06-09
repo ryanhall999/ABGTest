@@ -25,7 +25,6 @@ function App() {
 		prodNum.value = e.target[0].value;
 		await axios.post("/api/indvProduct", prodNum).then((response) => {
 			if (response.data) {
-				console.log(response.data);
 				setActive(response.data);
 			} else {
 				alert("No Match");
@@ -38,7 +37,6 @@ function App() {
 			.then((responses) => responses.map((response) => response.data))
 			.then((results) => {
 				let newArr = [];
-				console.log(results);
 				for (let i = 0; i < 15; i++) {
 					newArr.push(randomProperty(results[0]));
 				}
