@@ -1,7 +1,4 @@
 const pg = require("pg");
-const { Client } = require("pg");
-const faker = require("faker");
-const fs = require("fs");
 const sqls = require("./sql.js");
 
 let sql1 = sqls.sql1;
@@ -9,25 +6,16 @@ let sql2 = sqls.sql2;
 let sql3 = sqls.sql3;
 let sql4 = sqls.sql4;
 let sql5 = sqls.sql5;
-let sql6 = sqls.sql6;
-let sql7 = sqls.sql7;
-// let sql8 = sqls.sql8;
-// let sql9 = sqls.sql9;
-// let sql10 = sqls.sql10;
-// let sql11 = sqls.sql11;
-// let sql12 = sqls.sql12;
-// let sql13 = sqls.sql13;
-// let sql14 = sqls.sql14;
-// let sql15 = sqls.sql15;
 let sql_2_1 = sqls.sql_2_1;
 let sql_2_2 = sqls.sql_2_2;
 let sql_2_3 = sqls.sql_2_3;
 let sql_2_4 = sqls.sql_2_4;
 let sql_2_5 = sqls.sql_2_5;
-let sql_2_6 = sqls.sql_2_6;
-let sql_2_7 = sqls.sql_2_7;
 let sql_3_1 = sqls.sql_3_1;
 let sql_3_2 = sqls.sql_3_2;
+let sql_3_3 = sqls.sql_3_3;
+let sql_3_4 = sqls.sql_3_4;
+let sql_3_5 = sqls.sql_3_5;
 
 const client = new pg.Client(
 	process.env.DATABASE_URL || "postgres://localhost/ABGdb"
@@ -35,63 +23,8 @@ const client = new pg.Client(
 
 client.connect();
 
-const getProducts = (amount) => {
-	let products = [];
-	for (let i = 0; i < amount; i++) {
-		//let NIIN = faker.datatype.number(9, 9);
-		let NAME = faker.commerce.productName();
-		let INC = faker.datatype.number(9, 5);
-		let FSC = faker.datatype.number(9, 4);
-		let FSG = faker.datatype.number(9, 2);
-		let COUNTRY_CODE = faker.datatype.number(9, 2);
-		let ITEM_NUMBER = faker.datatype.number(9, 3);
-		let PUB_DATE = faker.date.past(25);
-		let newProd = {
-			//NIIN: NIIN,
-			NAME: NAME,
-			INC: INC,
-			FSC: FSC,
-			FSG: FSG,
-			COUNTRY_CODE: COUNTRY_CODE,
-			ITEM_NUMBER: ITEM_NUMBER,
-			PUB_DATE: PUB_DATE,
-		};
-		products.push(newProd);
-	}
-	return products;
-};
-
-const products = {
-	read: async () => {
-		return (await client.query("SELECT * from nsn")).rows;
-	},
-	create: async ({
-		//NIIN,
-		NAME,
-		INC,
-		FSC,
-		FSG,
-		COUNTRY_CODE,
-		ITEM_NUMBER,
-		PUB_DATE,
-	}) => {
-		const SQL = `INSERT INTO nsn( NAME, INC, FSC, FSG, COUNTRY_CODE, ITEM_NUMBER, PUB_DATE) values($1, $2, $3, $4, $5, $6, $7) returning *`;
-		return (
-			await client.query(SQL, [
-				//NIIN,
-				NAME,
-				INC,
-				FSC,
-				FSG,
-				COUNTRY_CODE,
-				ITEM_NUMBER,
-				PUB_DATE,
-			])
-		).rows[0];
-	},
-};
-
 const sync = async () => {
+	// Creates SQL tables
 	const SQL = `
 	CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -147,34 +80,22 @@ const sync = async () => {
 	await client.query(sql3);
 	await client.query(sql4);
 	await client.query(sql5);
-	await client.query(sql6);
-	await client.query(sql7);
-	// await client.query(sql8);
-	// await client.query(sql9);
-	// await client.query(sql10);
-	// await client.query(sql11);
-	// await client.query(sql12);
-	// await client.query(sql13);
-	// await client.query(sql14);
-	// await client.query(sql15);
+
 	await client.query(sql_2_1);
 	await client.query(sql_2_2);
 	await client.query(sql_2_3);
 	await client.query(sql_2_4);
 	await client.query(sql_2_5);
-	await client.query(sql_2_6);
-	await client.query(sql_2_7);
+
 	await client.query(sql_3_1);
 	await client.query(sql_3_2);
-
-	// const _products = getProducts(250);
-
-	// const [foo, bar, bazz] = await Promise.all(
-	// 	Object.values(_products).map((product) => products.create(product))
-	// );
+	await client.query(sql_3_3);
+	await client.query(sql_3_4);
+	await client.query(sql_3_5);
 };
 
 const readProductList = async () => {
+	// Reads and combines all product tables
 	const SQL = ` SELECT nsn.niin,
 		NAME,
 		inc,
@@ -207,6 +128,7 @@ const readProductList = async () => {
 };
 
 const getIndvProd = async (prodId) => {
+	// Finds product from search bar
 	return (
 		await client.query(
 			` SELECT nsn.niin,
