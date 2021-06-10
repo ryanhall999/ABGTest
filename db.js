@@ -26,6 +26,8 @@ let sql_2_4 = sqls.sql_2_4;
 let sql_2_5 = sqls.sql_2_5;
 let sql_2_6 = sqls.sql_2_6;
 let sql_2_7 = sqls.sql_2_7;
+let sql_3_1 = sqls.sql_3_1;
+let sql_3_2 = sqls.sql_3_2;
 
 const client = new pg.Client(
 	process.env.DATABASE_URL || "postgres://localhost/ABGdb"
@@ -95,6 +97,7 @@ const sync = async () => {
 
 	DROP TABLE IF EXISTS nsn;
 	DROP TABLE IF EXISTS nsn_flis_parts;
+	DROP TABLE IF EXISTS nsn_characteristics;
 
 	CREATE TABLE nsn (
 		niin             				INT NOT NULL,
@@ -123,6 +126,17 @@ const sync = async () => {
   	fsc              				INT NOT NULL,
   	publication_date 				VARCHAR(10) NOT NULL
 	);
+
+	CREATE TABLE nsn_characteristics (
+     id                     INT NOT NULL,
+     niin                   INT NOT NULL,
+     mrc                    VARCHAR(4) NOT NULL,
+     requirements_statement VARCHAR(104) NOT NULL,
+     clear_text_reply       VARCHAR(3117) NOT NULL,
+     publication_date       VARCHAR(10) NOT NULL,
+     uniqueid               VARCHAR(32) NOT NULL
+  );  
+	
 	
 `;
 
@@ -150,6 +164,8 @@ const sync = async () => {
 	await client.query(sql_2_5);
 	await client.query(sql_2_6);
 	await client.query(sql_2_7);
+	await client.query(sql_3_1);
+	await client.query(sql_3_2);
 
 	// const _products = getProducts(250);
 
@@ -159,15 +175,69 @@ const sync = async () => {
 };
 
 const readProductList = async () => {
-	const SQL =
-		"SELECT nsn.niin, name, inc, nsn.fsc, fsg, country_code, item_number, nsn.publication_date, nsn_flis_parts.id, nsn_flis_parts.part_number, nsn_flis_parts.unpunctuated, nsn_flis_parts.cage_code, nsn_flis_parts.rncc, nsn_flis_parts.rnvc, nsn_flis_parts.dac, nsn_flis_parts.rnaac, nsn_flis_parts.status, nsn_flis_parts.msds, nsn_flis_parts.sadc  FROM nsn INNER JOIN nsn_flis_parts ON nsn.niin = nsn_flis_parts.niin";
+	const SQL = ` SELECT nsn.niin,
+		NAME,
+		inc,
+		nsn.fsc,
+		fsg,
+		country_code,
+		item_number,
+		nsn.publication_date,
+		nsn_flis_parts.id,
+		nsn_flis_parts.part_number,
+		nsn_flis_parts.unpunctuated,
+		nsn_flis_parts.cage_code,
+		nsn_flis_parts.rncc,
+		nsn_flis_parts.rnvc,
+		nsn_flis_parts.dac,
+		nsn_flis_parts.rnaac,
+		nsn_flis_parts.status,
+		nsn_flis_parts.msds,
+		nsn_flis_parts.sadc,
+		nsn_characteristics.mrc,
+		nsn_characteristics.requirements_statement,
+		nsn_characteristics.clear_text_reply,
+		nsn_characteristics.uniqueid
+		FROM   nsn
+		INNER JOIN nsn_flis_parts
+						ON nsn.niin = nsn_flis_parts.niin
+		INNER JOIN nsn_characteristics
+						ON nsn.niin = nsn_characteristics.niin  `;
 	return (await client.query(SQL)).rows;
 };
 
 const getIndvProd = async (prodId) => {
 	return (
 		await client.query(
-			`SELECT nsn.niin, name, inc, nsn.fsc, fsg, country_code, item_number, nsn.publication_date, nsn_flis_parts.id, nsn_flis_parts.part_number, nsn_flis_parts.unpunctuated, nsn_flis_parts.cage_code, nsn_flis_parts.rncc, nsn_flis_parts.rnvc, nsn_flis_parts.dac, nsn_flis_parts.rnaac, nsn_flis_parts.status, nsn_flis_parts.msds, nsn_flis_parts.sadc  FROM nsn INNER JOIN nsn_flis_parts ON nsn.niin = nsn_flis_parts.niin WHERE nsn.niin=$1`,
+			` SELECT nsn.niin,
+			NAME,
+			inc,
+			nsn.fsc,
+			fsg,
+			country_code,
+			item_number,
+			nsn.publication_date,
+			nsn_flis_parts.id,
+			nsn_flis_parts.part_number,
+			nsn_flis_parts.unpunctuated,
+			nsn_flis_parts.cage_code,
+			nsn_flis_parts.rncc,
+			nsn_flis_parts.rnvc,
+			nsn_flis_parts.dac,
+			nsn_flis_parts.rnaac,
+			nsn_flis_parts.status,
+			nsn_flis_parts.msds,
+			nsn_flis_parts.sadc,
+			nsn_characteristics.mrc,
+			nsn_characteristics.requirements_statement,
+			nsn_characteristics.clear_text_reply,
+			nsn_characteristics.uniqueid
+			FROM   nsn
+			INNER JOIN nsn_flis_parts
+							ON nsn.niin = nsn_flis_parts.niin
+			INNER JOIN nsn_characteristics
+							ON nsn.niin = nsn_characteristics.niin
+	  	WHERE nsn.niin=$1`,
 			[prodId]
 		)
 	).rows[0];
