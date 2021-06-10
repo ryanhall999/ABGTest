@@ -22,9 +22,10 @@ function App() {
 	const findProd = async (e) => {
 		e.preventDefault();
 		let prodNum = {};
-		prodNum.value = e.target[0].value;
+		prodNum.value = e.target[0].value.split("-")[2];
 		await axios.post("/api/indvProduct", prodNum).then((response) => {
 			if (response.data) {
+				console.log(response.data);
 				setActive(response.data);
 			} else {
 				alert("No Match");
@@ -37,6 +38,7 @@ function App() {
 			.then((responses) => responses.map((response) => response.data))
 			.then((results) => {
 				let newArr = [];
+				console.log(results);
 				for (let i = 0; i < 15; i++) {
 					newArr.push(randomProperty(results[0]));
 				}
@@ -67,7 +69,9 @@ function App() {
 				<div>
 					<div id="individualItem">
 						<ul>
-							<li>{active.niin}</li>
+							<li>
+								{active.fsc}-{active.country_code}-{active.niin}
+							</li>
 							<li>Name: {active.name}</li>
 							<li>Part Number: {active.part_number}</li>
 							<li>Cage Code: {active.cage_code}</li>
@@ -80,9 +84,6 @@ function App() {
 							<li>Msds: {active.msds}</li>
 							<li>Sadc: {active.sadc}</li>
 							<li>INC: {active.inc}</li>
-							<li>FSC: {active.fsc}</li>
-							<li>FSG: {active.fsg}</li>
-							<li>Country Code:{active.country_code}</li>
 							<li>Item Number:{active.item_number}</li>
 							<li>Publication Date:{active.publication_date}</li>
 						</ul>
@@ -117,7 +118,7 @@ function App() {
 								return (
 									<li id="prod" key={prod.niin}>
 										<h1 onClick={cardInfo} id={prod.niin}>
-											{prod.niin}
+											{prod.fsc}-{prod.country_code}-{prod.niin}
 										</h1>
 										<div className="prodInfo">
 											<h3>Product Name: {prod.name}</h3>
