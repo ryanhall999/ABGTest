@@ -6,26 +6,29 @@ function App() {
 	const [active, setActive] = useState([]);
 
 	function randomProperty(obj) {
+		// Function to randomly select 15 products
 		var keys = Object.keys(obj);
 		return obj[keys[(keys.length * Math.random()) << 0]];
 	}
 
 	function cardInfo(e) {
+		// Sets clicked number on list as active
 		const prod2 = prodList.find(({ niin }) => niin == e.target.id);
 		setActive(prod2);
 	}
 
 	function setEmpty() {
+		// Clears active product
 		setActive([]);
 	}
 
 	const findProd = async (e) => {
+		// Handles search for individual product
 		e.preventDefault();
 		let prodNum = {};
 		prodNum.value = e.target[0].value.split("-")[2];
 		await axios.post("/api/indvProduct", prodNum).then((response) => {
 			if (response.data) {
-				console.log(response.data);
 				setActive(response.data);
 			} else {
 				alert("No Match");
@@ -34,11 +37,11 @@ function App() {
 	};
 
 	useEffect(() => {
+		// Loads list of products on refresh
 		Promise.all([axios.get("/api/product_list")])
 			.then((responses) => responses.map((response) => response.data))
 			.then((results) => {
 				let newArr = [];
-				console.log(results);
 				for (let i = 0; i < 15; i++) {
 					newArr.push(randomProperty(results[0]));
 				}
