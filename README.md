@@ -1,7 +1,7 @@
 # ABGTest
 
-Sample storefront for Aerobase Group
+Sample storefront for Aerobase Group  Interview
 
-npm i
+To Start: npm i
 
-npm start
+To Run: npm start
